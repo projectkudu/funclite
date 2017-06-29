@@ -75,24 +75,6 @@
     <Content Include="package.json" />
     <Content Include="README.md" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="FuncRoot\" />
-    <Folder Include="FuncRoot\HttpTrigger-Node-Promise\" />
-    <Folder Include="FuncRoot\HttpTriggerJS2\" />
-    <Folder Include="Scripts\" />
-    <Folder Include="FuncRoot\HttpTriggerJS1\" />
-    <Folder Include="FuncRoot\shared\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="FuncRoot\HttpTrigger-Node-Promise\index.js" />
-    <Compile Include="FuncRoot\HttpTriggerJS1\index.js">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="FuncRoot\HttpTriggerJS2\index.js" />
-    <Compile Include="FuncRoot\shared\test.js">
-      <SubType>Code</SubType>
-    </Compile>
-  </ItemGroup>
   <!-- Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them. -->
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsTools.targets" />
