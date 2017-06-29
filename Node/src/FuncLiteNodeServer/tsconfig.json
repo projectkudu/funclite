@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "target": "es2015",
+    "module": "commonjs",
+    "sourceMap": false,
+    "strictNullChecks": true,
+    "noImplicitAny": true,
+    "outDir": "out"
+  }
+}

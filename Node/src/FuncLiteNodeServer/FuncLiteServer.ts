@@ -7,7 +7,7 @@ import * as path from "path";
 
 export class FuncLiteServer {
 
-    private server;
+    private server: any;
     private functionsRoot: string;
 
     constructor() {
@@ -18,26 +18,26 @@ export class FuncLiteServer {
     }
 
     configureRoutes() {
-        this.server.get("/", (request, response) => { this.warmup(request, response); });
-        this.server.post("/api/:funcName", (request, response) => {
+        this.server.get("/", (request: any, response: any) => { this.warmup(request, response); });
+        this.server.post("/api/:funcName", (request:any, response: any) => {
             this.invokeFunction(request, response);
         });
 
         // respond to ping from functions portal
-        this.server.post("/admin/host/ping", (request, response) => { this.respondToPing(request, response); });
+        this.server.post("/admin/host/ping", (request: any, response: any) => { this.respondToPing(request, response); });
     }
 
-    respondToPing(request, response) {
+    respondToPing(request:any , response: any) {
         Logger.info("Responding to ping");
         response.sendStatus(200);
     }
 
-    warmup(request, response) {
+    warmup(request: any, response: any) {
         Logger.info(`Your function app is up and running serving from ${this.functionsRoot}`);
         response.send("Your function app is up and running");
     }
 
-    invokeFunction(request, response) {
+    invokeFunction(request: any, response: any) {
 
         Logger.info("invokeFunction");
 

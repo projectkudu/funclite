@@ -1,14 +1,17 @@
 ﻿import * as util from "util";
 
+type PromiseResolver = (value?: any | PromiseLike<any>) => void;
+type PromiseRejector = (reason: any) => void;
+
 export class Context {
 
     private _done: boolean;
-    private doneResolver;
-    private doneRejector;
-    private donePromise;
+    private doneResolver: PromiseResolver;
+    private doneRejector: PromiseRejector;
+    private donePromise: Promise<any>;
 
     constructor() {
-        this.donePromise = new Promise((resolve, reject) => {
+        this.donePromise = new Promise((resolve: PromiseResolver, reject: PromiseRejector) => {
             this.doneResolver = resolve;
             this.doneRejector = reject;
         });

@@ -8,7 +8,7 @@ export class FuncRequestBuilder {
     private parsedUrl: Url;
 
     constructor(private request: http.ServerRequest) {
-        this.parsedUrl = parse(this.request.url, true);
+        this.parsedUrl = parse(this.request.url as string, true);
     }
 
     buildRequest(): Promise<FuncRequest> {
@@ -23,11 +23,11 @@ export class FuncRequestBuilder {
     }
 
     private get originalUrl(): string {
-        return this.parsedUrl.href;
+        return this.parsedUrl.href as string;
     }
 
     private get method(): string {
-        return this.request.method;
+        return this.request.method as string;
     }
 
     private get query(): any {
@@ -41,9 +41,9 @@ export class FuncRequestBuilder {
     private getRequestBody(): Promise<string> {
         return new Promise((resolve, reject) => {
             if (this.request.method === "POST") {
-                const rawBody = [];
+                const rawBody:Buffer[] = [];
                 this.request.on("data",
-                    data => {
+                    (data: Buffer)=> {
                         rawBody.push(data);
                         if (rawBody.length > FuncRequestBuilder.maxPostBodySize) {
                             this.request.connection.destroy();

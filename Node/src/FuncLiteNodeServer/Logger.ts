@@ -1,18 +1,22 @@
 ﻿import * as winston from "winston";
 
 import * as path from "path";
-import {Environment as Config} from "./Environment";
+import { Environment } from "./Environment";
+
+import * as fs from "fs";
 
 export class Logger {
 
     static timeStampFormat = () => (new Date()).toLocaleTimeString();
 
-    static logger: any;
+    static logger: winston.LoggerInstance;
 
     static initLogger() {
+        if (!fs.existsSync(Environment.logsLocation)) {
+            fs.mkdirSync(Environment.logsLocation);
+        }
 
-        const logLocation: string = Config.isAzureEnvironment ? path.join(Config.home,"LogFiles") : path.join(__dirname);
-        const logFile = path.join(logLocation, "Funclite.log");
+        const logFile = path.join(Environment.logsLocation, "Funclite.log");
 
         Logger.logger = new (winston.Logger)(
         {

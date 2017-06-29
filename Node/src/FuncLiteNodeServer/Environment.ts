@@ -6,11 +6,15 @@ export class Environment {
     }
 
     static get home(): string {
-        return process.env.HOME;
+        return process.env.HOME as string;
     }
 
     static get functionsRoot(): string {
-        return this.isAzureEnvironment ? path.join(this.home, "site", "wwwroot") : path.join(__dirname, "FunctionsRoot");
+        return this.isAzureEnvironment ? path.join(this.home, "site", "wwwroot") : path.join(__dirname, "/../", "FunctionsRoot");
+    }
+
+    static get logsLocation(): string {
+        return this.isAzureEnvironment ? path.join(this.home, "LogFiles") : path.join(__dirname, "/../", "LogFiles");
     }
 
     static get port(): number|string {

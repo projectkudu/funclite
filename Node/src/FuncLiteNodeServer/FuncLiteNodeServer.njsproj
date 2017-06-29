@@ -4,7 +4,8 @@
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <Name>FuncLiteNodeServer</Name>
     <RootNamespace>FuncLiteNodeServer</RootNamespace>
-    <Environment>FUNCTIONS_ROOT=F:\\src\\kudu\\funclite\\Node\\src\\FuncLiteNodeServer\\FuncRoot</Environment>
+    <Environment>
+    </Environment>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -12,7 +13,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>d08016e9-de5f-46a0-b885-7ecc99da2907</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>server.ts</StartupFile>
+    <StartupFile>out\server.ts</StartupFile>
     <StartWebBrowser>True</StartWebBrowser>
     <SearchPath>
     </SearchPath>
@@ -47,6 +48,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="applicationHost.xdt" />
+    <Content Include="tsconfig.json" />
     <Content Include="web.config">
       <SubType>Code</SubType>
     </Content>
