@@ -34,7 +34,12 @@ export class Context {
             this.doneRejector(err);
         }
         else {
-            this.doneResolver(result);
+            if (result) {
+                this.doneResolver(result);
+            } else {
+                const thisContext = this as any;
+                this.doneResolver(thisContext.res);
+            }
         }
     }
 

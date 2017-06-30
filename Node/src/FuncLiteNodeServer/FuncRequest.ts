@@ -4,5 +4,7 @@
     query: string | any;
     headers: any;
     rawBody: string;
+    body: any;
+    params: any;
 }
 

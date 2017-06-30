@@ -11,7 +11,8 @@ export class FunctionManager {
     }
 
     userFuncSuccess(result: any) {
-        this.response.writeHead(result.status, result.headers);
+        const responseStatus = result.status || 200;
+        this.response.writeHead(responseStatus, result.headers);
         this.response.end(JSON.stringify(result.body));
     }
 
@@ -23,11 +24,15 @@ export class FunctionManager {
     onFuncRequestReady(funcRequest: FuncRequest) {
         const context = new Context();
         const userFunc = require(this.functionPath);
-        userFunc(context, this.request);
-        context.waitForCompletion().then((result) => {this.userFuncSuccess(result);}).catch((error) => {this.userFuncFailure(error);});
+        userFunc(context, funcRequest);
+        context.waitForCompletion().then((result) => {
+             this.userFuncSuccess(result);
+        }).catch((error) => { this.userFuncFailure(error); });
     }
 
     invokeUserFunction() {
-        this.funcRequestBuilder.buildRequest().then((funcRequest: FuncRequest) => {this.onFuncRequestReady(funcRequest); });
+        this.funcRequestBuilder.buildRequest().then((funcRequest: FuncRequest) => {
+             this.onFuncRequestReady(funcRequest);
+        });
     }
 }

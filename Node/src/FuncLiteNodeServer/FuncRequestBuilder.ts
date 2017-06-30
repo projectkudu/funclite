@@ -18,10 +18,19 @@ export class FuncRequestBuilder {
             funcRequest.originalUrl = this.originalUrl;
             funcRequest.query = this.query;
             funcRequest.headers = this.headers;
-            this.getRequestBody().then((requestBody: string) => { funcRequest.rawBody = requestBody; resolve(funcRequest); }).catch((error) => { reject(error); });
+            funcRequest.params = this.params;
+            this.getRequestRawBody().then((requestBody: string) => {
+                funcRequest.rawBody = requestBody;
+                funcRequest.body = funcRequest.rawBody ? JSON.parse(funcRequest.rawBody) : null;
+                resolve(funcRequest);
+            }).catch((error) => { reject(error); });
         });
     }
 
+    private get params(): any {
+        const thisRequest = this.request as any;
+        return thisRequest.params;
+    }
     private get originalUrl(): string {
         return this.parsedUrl.href as string;
     }
@@ -38,7 +47,7 @@ export class FuncRequestBuilder {
         return this.request.headers;
     }
 
-    private getRequestBody(): Promise<string> {
+    private getRequestRawBody(): Promise<string> {
         return new Promise((resolve, reject) => {
             if (this.request.method === "POST") {
                 const rawBody:Buffer[] = [];
