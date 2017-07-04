@@ -1,7 +1,7 @@
 ﻿import { FunctionManager } from "./FunctionManager";
 import { FuncRequestBuilder } from "./FuncRequestBuilder";
 import * as express from "express";
-import {Environment as Config} from "./Environment";
+import {Config} from "./Config";
 import {Logger} from "./Logger";
 import * as path from "path";
 import { Application, Request, Response } from "@types/express-serve-static-core";

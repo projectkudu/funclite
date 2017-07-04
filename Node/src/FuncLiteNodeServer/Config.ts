@@ -1,6 +1,6 @@
 ﻿import * as path from "path";
 
-export class Environment {
+export class Config {
     static get isAzureEnvironment(): boolean {
         return process.env.WEBSITE_INSTANCE_ID != null;
     }

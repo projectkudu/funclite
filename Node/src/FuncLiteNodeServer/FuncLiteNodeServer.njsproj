@@ -52,7 +52,10 @@
     <Content Include="web.config">
       <SubType>Code</SubType>
     </Content>
-    <TypeScriptCompile Include="Environment.ts">
+    <TypeScriptCompile Include="Assert.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="Config.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="Context.ts">
@@ -67,7 +70,13 @@
     <TypeScriptCompile Include="FuncRequestBuilder.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="FunctionChangeHandler.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="FunctionManager.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="FunctionsWatcher.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="Logger.ts">

@@ -262,3 +262,5 @@ __pycache__/
 
 #ts output dir
 Node/src/FuncLiteNodeServer/out/
+Node/src/FuncLiteNodeServer/siteextensions/
+Node/src/FuncLiteNodeServer/siteextensions.zip

@@ -1,7 +1,7 @@
 ﻿import * as winston from "winston";
 
 import * as path from "path";
-import { Environment } from "./Environment";
+import { Config } from "./Config";
 
 import * as fs from "fs";
 
@@ -12,11 +12,11 @@ export class Logger {
     static logger: winston.LoggerInstance;
 
     static initLogger() {
-        if (!fs.existsSync(Environment.logsLocation)) {
-            fs.mkdirSync(Environment.logsLocation);
+        if (!fs.existsSync(Config.logsLocation)) {
+            fs.mkdirSync(Config.logsLocation);
         }
 
-        const logFile = path.join(Environment.logsLocation, "Funclite.log");
+        const logFile = path.join(Config.logsLocation, "Funclite.log");
 
         Logger.logger = new (winston.Logger)(
         {
