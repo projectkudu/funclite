@@ -76,9 +76,6 @@
     <TypeScriptCompile Include="FunctionMetadata.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="FunctionMetadataBuilder.ts">
-      <SubType>Code</SubType>
-    </TypeScriptCompile>
     <TypeScriptCompile Include="FunctionPortalStub.ts" />
     <TypeScriptCompile Include="FunctionCollection.ts">
       <SubType>Code</SubType>

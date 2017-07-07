@@ -4,7 +4,6 @@ const path = require("path");
 import { FunctionMetadata } from "./FunctionMetadata";
 import {Utils, ReflectedPromise } from "./Utils";
 import {ScriptConstants} from "./ScriptConstants";
-import {FunctionMetadataBuilder} from "./FunctionMetadataBuilder";
 
 export class FunctionCollection {
   private functionsMap: Map<string, FunctionMetadata>;
@@ -72,8 +71,8 @@ export class FunctionCollection {
     const functionNames: string[] = files.filter((file, index) => { return isFunction[index] });
 
     const builderPromises: Promise<FunctionMetadata>[] = functionNames.map((functionName : string)=> {
-      const metadataBuilder: FunctionMetadataBuilder = new FunctionMetadataBuilder(functionName);
-      return metadataBuilder.build();
+        const functionMetadata: FunctionMetadata = new FunctionMetadata(functionName);
+        return functionMetadata.build();
     });
     const reflectedPromise: ReflectedPromise[] = await Promise.all(builderPromises.map(Utils.reflect));
     const resolvedPromises: ReflectedPromise[] = reflectedPromise.filter((promise) => {

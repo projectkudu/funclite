@@ -34,7 +34,7 @@ export class FunctionManager {
         const funcRequestBuilder = new FuncRequestBuilder(request);
         const funcRequest: FuncRequest = await funcRequestBuilder.buildRequest();
         const context = new Context();
-        const entryPoint = functionMetadata.entryPoint;
+        const entryPoint = await functionMetadata.getEntryPoint();
         const result = await this.deferInvoke(entryPoint, context, funcRequest);
         const responseStatus = result.status || 200;
         response.writeHead(responseStatus, result.headers);
