@@ -48,4 +48,12 @@ export class FunctionManager {
     }
   }
 
+    async addFunctionDir(path: string) {
+        await this.functionCollection.addFunctionDir(path);
+    }
+
+    removeFunctionDir(path: string) {
+        this.functionCollection.removeFunctionDir(path);
+    }
+
 }

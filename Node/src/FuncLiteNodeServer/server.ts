@@ -7,14 +7,15 @@ import { FunctionManager } from "./FunctionManager";
 
 Logger.initLogger();
 
-let functionWatcher = new FunctionsWatcher(Config.functionsRoot);
-functionWatcher.start();
-
-let functionChangeHandler = new FunctionChangeHandler(Config.functionsRoot);
-functionWatcher.onChange(functionChangeHandler.onChange);
-functionWatcher.onError(functionChangeHandler.onError);
-
 let functionManager = new FunctionManager(Config.functionsRoot);
+
+let functionWatcher = new FunctionsWatcher(Config.functionsRoot);
+let functionChangeHandler = new FunctionChangeHandler(Config.functionsRoot, functionManager);
+const watcherPromise = functionWatcher.start(functionChangeHandler);
+
 let funcLiteServer = new FuncLiteServer(functionManager);
-functionManager.processFunctions().then(() => { funcLiteServer.start(); });
+const processFunctionsPromise = functionManager.processFunctions();
+
+Promise.all([watcherPromise, processFunctionsPromise]).then(() => { funcLiteServer.start(); })
+    .catch((error) => { console.log(error); });
 
