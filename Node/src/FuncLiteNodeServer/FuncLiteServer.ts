@@ -1,19 +1,15 @@
-﻿import { FunctionManager } from "./FunctionManager";
-import { FuncRequestBuilder } from "./FuncRequestBuilder";
-import * as express from "express";
+﻿import * as express from "express";
 import {Config} from "./Config";
 import {Logger} from "./Logger";
-import * as path from "path";
 import { Application, Request, Response } from "@types/express-serve-static-core";
+import {FunctionPortalStub} from "./FunctionPortalStub";
+import {FunctionManager} from "./FunctionManager";
 
 export class FuncLiteServer {
 
-  private server: Application;
-    private functionsRoot: string;
+    private readonly server: Application;
 
-    constructor() {
-
-        this.functionsRoot = Config.functionsRoot;
+    constructor(private readonly functionManager: FunctionManager) {
         this.server = express();
         this.configureRoutes();
     }
@@ -25,54 +21,30 @@ export class FuncLiteServer {
             this.invokeFunction(request, response);
         });
 
-        // respond to ping from functions portal
-        this.server.post("/admin/host/ping", (request: any, response: any) => { this.respondToPing(request, response); });
+        this.server.post("/admin/host/ping", (request: any, response: any) => {
+           this.respondToPing(request, response);
+        });
 
-        // retrieve master key - GET https://funclite-fnapp.azurewebsites.net/admin/host/systemkeys/_master
-        // [Route("admin/host/{keys:regex(^(keys|functionkeys|systemkeys)$)}/{name}")]
-        this.server.get("/admin/host/systemkeys/_master", (request: Request, response: Response) => { this.getMasterKey(request, response); });
+        this.server.get("/admin/host/systemkeys/_master", (request: Request, response: Response) => {
+           FunctionPortalStub.getMasterKey(request, response);
+        });
 
-        this.server.get("/admin/host/status", (request: any, response: any) => { this.getStatus(request, response); });
+        this.server.get("/admin/host/status", (request: any, response: any) => {
+           FunctionPortalStub.getStatus(request, response);
+        });
 
-        this.server.get("/admin/functions/:functionName/status", (request: any, response: any) => { this.getFunctionStatus(request, response); });
+        this.server.get("/admin/functions/:functionName/status", (request: any, response: any) => {
+           FunctionPortalStub.getFunctionStatus(request, response);
+        });
 
-        this.server.get("/admin/host/keys", (request: any, response: any) => { this.getHostKeys(request, response); });
+        this.server.get("/admin/host/keys", (request: any, response: any) => {
+           FunctionPortalStub.getHostKeys(request, response);
+        });
 
-      this.server.get("/admin/functions/:name/keys", (request: any, response: any) => { this.getFunctionKeys(request, response);});
+        this.server.get("/admin/functions/:name/keys", (request: any, response: any) => {
+           FunctionPortalStub.getFunctionKeys(request, response);
+        });
     }
-
-  //
-  //[Route("admin/functions/{name}/keys")]
-  getFunctionKeys(request: any, response: any) {
-    this.getHostKeys(request, response);
-  }
-
-    //[Route("admin/host/{keys:regex(^(keys|functionkeys|systemkeys)$)}")]
-    getHostKeys(request: any, response: any) {
-      // {"keys":[{"name":"default","value":"EAAyKFanqN/cKnUBB0WQEGE4Af6tpqi98Zos1sbYanWQUoceL3FNpw=="}],"links":[{"rel":"self","href":"https://fnfromportal.azurewebsites.net/admin/host/keys"}]}
-      const hostKeys = '{"keys":[{"name":"default","value":"EAAyKFanqN/cKnUBB0WQEGE4Af6tpqi98Zos1sbYanWQUoceL3FNpw=="}]}';
-      response.json(JSON.parse(hostKeys));
-    }
-
-    //[Route("admin/functions/{name}/status")]
-    getFunctionStatus(request: any, response: any) {
-      response.sendStatus(200);
-    }
-
-    // return %HOME%/data/function/secrets/host.json
-    getMasterKey(request: Request, response: any) {
-      Logger.info("retrieving masterkey");
-      //{ "name":"_master", "value":"KprDXkWTHs1F1/KGHz5fhvsHhjRzNBarrUrxFxslHpQlRWsW4Dy02Q==", "links":[{ "rel": "self", "href": "https://fnfromportal.azurewebsites.net/admin/host/systemkeys/_master" }] }
-      const masterKey = '{"name":"_master", "value": "KprDXkWTHs1F1/KGHz5fhvsHhjRzNBarrUrxFxslHpQlRWsW4Dy02Q=="}';
-      response.json(JSON.parse(masterKey));
-    }
-
-  getStatus(request: any, response: any) {
-    //{ "id":"fnfromportal", "state":"Running", "version":"1.0.11015.0" }
-    const status = '{"id":"nameofsite", "state": "Running", "version":"0.0.1"}';
-    response.json(JSON.parse(status));
-
-  }
 
     respondToPing(request:any , response: any) {
         Logger.info("Responding to ping");
@@ -80,21 +52,14 @@ export class FuncLiteServer {
     }
 
     warmup(request: any, response: any) {
-        Logger.info(`Your function app is up and running serving from ${this.functionsRoot}`);
+        Logger.info(`Your function app is up and running serving from ${this.functionManager.functionsRoot}`);
         response.send("Your function app is up and running");
     }
 
-    invokeFunction(request: any, response: any) {
-
-        const functionName = request.params.funcName;
-
-        Logger.info(`Invoking function:${functionName}`);
-
-        const functionPath = path.join(this.functionsRoot, functionName);
-
-        const funcRequestBuilder = new FuncRequestBuilder(request);
-        const functionManager = new FunctionManager(request, response, functionPath, funcRequestBuilder);
-        functionManager.invokeUserFunction();
+    async invokeFunction(request: any, response: any) {
+      const functionName = request.params.funcName;
+      Logger.info(`Invoking function:${functionName}`);
+      await this.functionManager.invokeAsync(request, response);
     }
 
     start() {

@@ -1,38 +1,51 @@
 ﻿import * as http from "http";
-import ServerResponse = http.ServerResponse;
-import ServerRequest = http.ServerRequest;
+import { FunctionCollection } from "./FunctionCollection";
 import {FuncRequestBuilder} from "./FuncRequestBuilder";
 import {FuncRequest} from "./FuncRequest";
 import {Context} from "./Context";
 
+type FunctionType = (...args: any[]) => any; 
+
 export class FunctionManager {
 
-    constructor(private request : ServerRequest, private response: ServerResponse, private functionPath: string, private funcRequestBuilder: FuncRequestBuilder) {
-    }
+  private functionCollection: FunctionCollection;
 
-    userFuncSuccess(result: any) {
-        const responseStatus = result.status || 200;
-        this.response.writeHead(responseStatus, result.headers);
-        this.response.end(JSON.stringify(result.body));
-    }
+  constructor(public functionsRoot: string) {
+      this.functionCollection = new FunctionCollection(this.functionsRoot);
+  }
 
-    userFuncFailure(error: any) {
-        this.response.writeHead(400, { 'Content-Type': 'application/json' });
-        this.response.end(JSON.stringify(error));
-    }
+  async processFunctions() {
+      await this.functionCollection.processFunctions();
+  }
 
-    onFuncRequestReady(funcRequest: FuncRequest) {
+  private deferInvoke(entryPoint: FunctionType, context: Context, funcRequest: FuncRequest): Promise<any> {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => { entryPoint(context, funcRequest) });
+      context.waitForCompletion().then((result) => { resolve(result); }).catch((error) => { reject(error); });
+    });
+  }
+
+  async invokeAsync(request: http.ServerRequest, response: http.ServerResponse) {
+    const functionName = (request as any).params.funcName.toLocaleLowerCase();
+    const functionMetadata = this.functionCollection.get(functionName);
+
+    if (functionMetadata) {
+      try {
+        const funcRequestBuilder = new FuncRequestBuilder(request);
+        const funcRequest: FuncRequest = await funcRequestBuilder.buildRequest();
         const context = new Context();
-        const userFunc = require(this.functionPath);
-        userFunc(context, funcRequest);
-        context.waitForCompletion().then((result) => {
-             this.userFuncSuccess(result);
-        }).catch((error) => { this.userFuncFailure(error); });
+        const entryPoint = functionMetadata.entryPoint;
+        const result = await this.deferInvoke(entryPoint, context, funcRequest);
+        const responseStatus = result.status || 200;
+        response.writeHead(responseStatus, result.headers);
+        response.end(JSON.stringify(result.body));
+      } catch (error) {
+        response.writeHead(400, { 'Content-Type': 'application/json' });
+        response.end(JSON.stringify(error));
+      }
+    } else {
+      (response as any).sendStatus(404);
     }
+  }
 
-    invokeUserFunction() {
-        this.funcRequestBuilder.buildRequest().then((funcRequest: FuncRequest) => {
-             this.onFuncRequestReady(funcRequest);
-        });
-    }
 }

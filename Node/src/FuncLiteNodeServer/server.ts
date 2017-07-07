@@ -3,6 +3,7 @@ import {Logger} from "./Logger";
 import {FunctionsWatcher} from "./FunctionsWatcher";
 import {Config} from "./Config";
 import { FunctionChangeHandler } from "./FunctionChangeHandler";
+import { FunctionManager } from "./FunctionManager";
 
 Logger.initLogger();
 
@@ -13,5 +14,7 @@ let functionChangeHandler = new FunctionChangeHandler(Config.functionsRoot);
 functionWatcher.onChange(functionChangeHandler.onChange);
 functionWatcher.onError(functionChangeHandler.onError);
 
-let funcLiteServer = new FuncLiteServer();
-funcLiteServer.start();
+let functionManager = new FunctionManager(Config.functionsRoot);
+let funcLiteServer = new FuncLiteServer(functionManager);
+functionManager.processFunctions().then(() => { funcLiteServer.start(); });
+

@@ -43,7 +43,7 @@ export class Context {
         }
     }
 
-    waitForCompletion() {
+    waitForCompletion(): Promise<any> {
         return this.donePromise;
     }
 
