@@ -1,4 +1,5 @@
 ﻿import * as util from "util";
+import { FunctionMetadata } from "./FunctionMetadata";
 
 type PromiseResolver = (value?: any | PromiseLike<any>) => void;
 type PromiseRejector = (reason: any) => void;
@@ -10,7 +11,7 @@ export class Context {
     private doneRejector: PromiseRejector;
     private donePromise: Promise<any>;
 
-    constructor() {
+    constructor(private functionMetadata :FunctionMetadata) {
         this.donePromise = new Promise((resolve: PromiseResolver, reject: PromiseRejector) => {
             this.doneResolver = resolve;
             this.doneRejector = reject;
@@ -20,6 +21,7 @@ export class Context {
     log(format: any, ...param: any[]) {
         const message: string = util.format.apply(null, arguments);
         console.log(message);
+        this.functionMetadata.logger.info(message);
     }
 
     done(err: any, result: any) {

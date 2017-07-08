@@ -33,7 +33,7 @@ export class FunctionManager {
       try {
         const funcRequestBuilder = new FuncRequestBuilder(request);
         const funcRequest: FuncRequest = await funcRequestBuilder.buildRequest();
-        const context = new Context();
+        const context = new Context(functionMetadata);
         const entryPoint = await functionMetadata.getEntryPoint();
         const result = await this.deferInvoke(entryPoint, context, funcRequest);
         const responseStatus = result.status || 200;
@@ -48,7 +48,8 @@ export class FunctionManager {
     }
   }
 
-    async addFunctionDir(path: string) {
+  async addFunctionDir(path: string) {
+      console.log("FunctionManager::addFunctionDir " + path);
         await this.functionCollection.addFunctionDir(path);
     }
 

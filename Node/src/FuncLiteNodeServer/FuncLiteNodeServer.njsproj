@@ -58,6 +58,9 @@
     <TypeScriptCompile Include="Context.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="FileUtils.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="FuncLiteServer.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>

@@ -20,4 +20,13 @@ export class Config {
     static get port(): number|string {
         return process.env.port || 1337;
     }
+
+    static get rootLogPath(): string {
+      return this.isAzureEnvironment ? path.join(this.home, "LogFiles", "Application", "Functions") :
+        path.join(this.logsLocation);
+    }
+
+    static get instanceId(): string|undefined {
+      return this.isAzureEnvironment ? process.env.WEBSITE_INSTANCE_ID : "localhost";
+    }
 }

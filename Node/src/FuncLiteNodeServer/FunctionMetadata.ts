@@ -1,14 +1,17 @@
-﻿import {Config} from "./Config";
+﻿import * as winston from "winston";
+import {Config} from "./Config";
 import {ScriptConstants} from "./ScriptConstants";
 import {Utils} from "./Utils";
 const util = require("util");
 const path = require("path");
 const fs = require("fs");
+import {Logger} from "./Logger";
 
 export class FunctionMetadata {
     private functionPath: string;
     private functionJsonPromise: Promise<any>;
     private _scriptFile: string;
+    private _logger: winston.LoggerInstance;
 
     constructor(private readonly functionName: string) {
         this.functionPath = path.join(Config.functionsRoot, this.functionName);
@@ -17,7 +20,12 @@ export class FunctionMetadata {
 
     async build() : Promise<FunctionMetadata> {
         this._scriptFile = await this.getPrimaryScriptFile(await this.functionJsonPromise);
+        this._logger = await Logger.getLoggerForFunction(this.functionName);
         return this;
+    }
+
+    get logger(): winston.LoggerInstance {
+        return this._logger;
     }
 
     get name(): string {

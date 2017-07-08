@@ -5,17 +5,20 @@ import {Config} from "./Config";
 import { FunctionChangeHandler } from "./FunctionChangeHandler";
 import { FunctionManager } from "./FunctionManager";
 
-Logger.initLogger();
+async function main() {
+    // Wait for global logger init to complete
+    await Logger.initLogger();
 
-let functionManager = new FunctionManager(Config.functionsRoot);
+    const functionManager = new FunctionManager(Config.functionsRoot);
+    const functionWatcher = new FunctionsWatcher(Config.functionsRoot);
+    const functionChangeHandler = new FunctionChangeHandler(Config.functionsRoot, functionManager);
+    const watcherPromise = functionWatcher.start(functionChangeHandler);
 
-let functionWatcher = new FunctionsWatcher(Config.functionsRoot);
-let functionChangeHandler = new FunctionChangeHandler(Config.functionsRoot, functionManager);
-const watcherPromise = functionWatcher.start(functionChangeHandler);
+    const funcLiteServer = new FuncLiteServer(functionManager);
+    const processFunctionsPromise = functionManager.processFunctions();
 
-let funcLiteServer = new FuncLiteServer(functionManager);
-const processFunctionsPromise = functionManager.processFunctions();
+    Promise.all([watcherPromise, processFunctionsPromise]).then(() => { funcLiteServer.start(); })
+        .catch((error) => { console.log(error); });
+}
 
-Promise.all([watcherPromise, processFunctionsPromise]).then(() => { funcLiteServer.start(); })
-    .catch((error) => { console.log(error); });
-
+main();

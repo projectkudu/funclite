@@ -97,6 +97,7 @@ export class FunctionCollection {
     }
 
     async addFunction(possibleFunctionDir: string) {
+        console.log("FunctionCollection::addFunctionDir " + possibleFunctionDir);
         const isFunctionDirectory = await this.isFunctionDirectory(possibleFunctionDir);
         if (isFunctionDirectory) {
             const functionName = path.basename(possibleFunctionDir);
@@ -111,10 +112,13 @@ export class FunctionCollection {
     }
 
     async addFunctionDir(possibleFunctionDir: string) {
+        console.log("FunctionCollection::addFunctionDir " + possibleFunctionDir);
         const parentDir = path.resolve(possibleFunctionDir, "..");
         const relative = path.relative(this.functionsRoot, parentDir);
         if (relative === "") {
-            await this.addFunction(possibleFunctionDir);    
+            await this.addFunction(possibleFunctionDir);
+        } else {
+            console.log("Not under function root " + path);
         }
     }
 
