@@ -6,20 +6,19 @@ const util = require("util");
 const path = require("path");
 const fs = require("fs");
 import {Logger} from "./Logger";
+import {FileUtils} from "./FileUtils";
 
 export class FunctionMetadata {
     private functionPath: string;
-    private functionJsonPromise: Promise<any>;
     private _scriptFile: string;
     private _logger: winston.LoggerInstance;
 
     constructor(private readonly functionName: string) {
         this.functionPath = path.join(Config.functionsRoot, this.functionName);
-        this.functionJsonPromise = this.getFunctionJson();
     }
 
     async build() : Promise<FunctionMetadata> {
-        this._scriptFile = await this.getPrimaryScriptFile(await this.functionJsonPromise);
+        this._scriptFile = await this.getPrimaryScriptFile(await this.getFunctionJson());
         this._logger = await Logger.getLoggerForFunction(this.functionName);
         return this;
     }
@@ -44,28 +43,9 @@ export class FunctionMetadata {
         return false;
     }
 
-    private stripBom(data: any) {
-        // we do this because JSON.parse would convert it to a utf8 string if encoding wasn't specified
-        if (Buffer.isBuffer(data)) {
-            data = data.toString('utf8');
-        }
-        data = data.replace(/^\uFEFF/, '');
-        return data;
-    }
-
-    private async getFunctionJson() : Promise<any> {
+    private getFunctionJson() : Promise<any> {
         const functionJsonPath = path.join(this.functionPath, ScriptConstants.FunctionMetadataFileName);
-        return new Promise((resolve, reject) => {
-            fs.readFile(functionJsonPath,
-                (error: any, data: any) => {
-                    if (error) {
-                        reject(error);
-                    } else {
-                        resolve(JSON.parse(this.stripBom(data)));
-                    }
-                });
-            }
-        );
+        return FileUtils.readAsJson(functionJsonPath);
     }
 
     private enumerateDirectory(directory: string): Promise<any[]> {
@@ -117,18 +97,18 @@ export class FunctionMetadata {
             }).filter((file: string) => { return file !== ""; });
 
             switch (scriptFiles.length) {
-            case 0:
-                throw new Error("No script files in function");
-            case 1:
-                primaryScriptFile = scriptFiles[0];
-                break;
-            default:
-            {
-                const runFile = scriptFiles.find((scriptFile: string) => { return this.isRunOrIndexFile(scriptFile); });
-                if (runFile) {
-                    primaryScriptFile = runFile;
+                case 0:
+                    throw new Error("No script files in function");
+                case 1:
+                    primaryScriptFile = scriptFiles[0];
+                    break;
+                default:
+                {
+                    const runFile = scriptFiles.find((scriptFile: string) => { return this.isRunOrIndexFile(scriptFile); });
+                    if (runFile) {
+                        primaryScriptFile = runFile;
+                    }
                 }
-            }
             }
         }
 

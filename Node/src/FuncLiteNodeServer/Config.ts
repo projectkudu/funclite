@@ -1,4 +1,5 @@
 ﻿import * as path from "path";
+const os = require("os");
 
 export class Config {
     static get isAzureEnvironment(): boolean {
@@ -26,7 +27,7 @@ export class Config {
         path.join(this.logsLocation);
     }
 
-    static get instanceId(): string|undefined {
-      return this.isAzureEnvironment ? process.env.WEBSITE_INSTANCE_ID : "localhost";
+    static get instanceId(): string {
+      return this.isAzureEnvironment ? process.env.WEBSITE_INSTANCE_ID : os.hostname();
     }
 }

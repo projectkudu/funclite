@@ -2,6 +2,43 @@
 const path = require("path");
 
 export class FileUtils {
+
+    private static stripBom(data: any) {
+        // we do this because JSON.parse would convert it to a utf8 string if encoding wasn't specified
+        if (Buffer.isBuffer(data)) {
+            data = data.toString('utf8');
+        }
+        data = data.replace(/^\uFEFF/, '');
+        return data;
+    }
+
+    static readAsJson(jsonPath: string): Promise<any> {
+        return new Promise((resolve, reject) => {
+            fs.readFile(jsonPath,
+                (error: any, data: any) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(JSON.parse(this.stripBom(data)));
+                    }
+                });
+            }
+        );    
+    }
+
+    static writeFile(path: string, fileContents: string): Promise<any> {
+        return new Promise((resolve, reject) => {
+            fs.writeFile(path, fileContents,
+                (error: any) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve();
+                    }
+                });
+        });
+    }
+
     static fileExists(filePath: string): Promise<boolean> {
         return new Promise((resolve, reject) => {
             fs.stat(filePath,

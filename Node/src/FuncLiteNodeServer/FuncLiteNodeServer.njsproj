@@ -86,6 +86,12 @@
     <TypeScriptCompile Include="FunctionsWatcher.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="HostConfig.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="HostConfigParser.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="Logger.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
