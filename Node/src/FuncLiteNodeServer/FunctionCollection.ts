@@ -35,7 +35,7 @@ export class FunctionCollection {
             fs.stat(filePath,
             (error: any, stats: any) => {
                 if (error) {
-                reject(error);
+                resolve(false);
                 } else {
                 resolve(stats.isDirectory());
                 }

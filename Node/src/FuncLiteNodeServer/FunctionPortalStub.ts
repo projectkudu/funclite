@@ -1,5 +1,5 @@
 ﻿import { Logger } from "./Logger";
-import { Application, Request, Response } from "@types/express-serve-static-core";
+import { Application, Request, Response } from "express-serve-static-core";
 
 export class FunctionPortalStub {
   //[Route("admin/host/{keys:regex(^(keys|functionkeys|systemkeys)$)}")]

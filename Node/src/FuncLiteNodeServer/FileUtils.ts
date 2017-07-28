@@ -18,7 +18,7 @@ export class FileUtils {
         });
     }
 
-    static mkdirp(filePath: string): Promise<string> {
+    static mkdirp(filePath: string): Promise<object> {
         const separator = path.sep;
         const initialDirectory = path.isAbsolute(filePath) ? separator : "";
         const initialPromise: Promise<string> = Promise.resolve(initialDirectory);

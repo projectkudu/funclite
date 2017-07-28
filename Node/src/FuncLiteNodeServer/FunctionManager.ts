@@ -3,7 +3,9 @@ import { FunctionCollection } from "./FunctionCollection";
 import {FuncRequestBuilder} from "./FuncRequestBuilder";
 import {FuncRequest} from "./FuncRequest";
 import {Context} from "./Context";
-
+import { Config } from "./Config";
+import {FunctionMetadata} from "./FunctionMetadata";
+const path = require("path");
 type FunctionType = (...args: any[]) => any; 
 
 export class FunctionManager {
@@ -25,12 +27,8 @@ export class FunctionManager {
     });
   }
 
-  async invokeAsync(request: http.ServerRequest, response: http.ServerResponse) {
-    const functionName = (request as any).params.funcName.toLocaleLowerCase();
-    const functionMetadata = this.functionCollection.get(functionName);
-
-    if (functionMetadata) {
-      try {
+  private async doInvokeAsync(request: http.ServerRequest, response: http.ServerResponse, functionMetadata: FunctionMetadata) {
+    try {
         const funcRequestBuilder = new FuncRequestBuilder(request);
         const funcRequest: FuncRequest = await funcRequestBuilder.buildRequest();
         const context = new Context(functionMetadata);
@@ -39,12 +37,28 @@ export class FunctionManager {
         const responseStatus = result.status || 200;
         response.writeHead(responseStatus, result.headers);
         response.end(JSON.stringify(result.body));
-      } catch (error) {
+    } catch (error) {
         response.writeHead(400, { 'Content-Type': 'application/json' });
         response.end(JSON.stringify(error));
-      }
+    }
+    }
+
+  async invokeAsync(request: http.ServerRequest, response: http.ServerResponse) {
+    const functionName: string = (request as any).params.funcName.toLocaleLowerCase();
+    let functionMetadata = this.functionCollection.get(functionName);
+
+    if (!functionMetadata) {
+        // In most cases file watcher should have processed this directory already and we never get here.
+        console.log(`Add new function outside watcher: ${functionName}`);
+        const functionPath = path.join(Config.functionsRoot, functionName);
+        await this.addFunctionDir(functionPath);
+        functionMetadata = this.functionCollection.get(functionName);
+    }
+
+    if (functionMetadata) {
+        await this.doInvokeAsync(request, response, functionMetadata);
     } else {
-      (response as any).sendStatus(404);
+        (response as any).sendStatus(404);
     }
   }
 
