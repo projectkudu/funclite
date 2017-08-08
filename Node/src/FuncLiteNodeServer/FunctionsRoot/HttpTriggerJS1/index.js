@@ -1,4 +1,4 @@
-﻿var test = require('../Shared/test');
+﻿var test = require('../shared/test');
 
 module.exports = function (context, req) {
     context.log('Node.js HTTP trigger function processed a request. Name=%s', req.query.name);

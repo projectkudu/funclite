@@ -2,7 +2,10 @@
   "name": "func-lite-node-server",
   "version": "0.0.0",
   "description": "FuncLiteNodeServer",
-  "main": "app.js",
+  "main": "out/server.js",
+  "scripts": {
+    "start":  "node out/server.js" 
+  }, 
   "author": {
     "name": "balag"
   },

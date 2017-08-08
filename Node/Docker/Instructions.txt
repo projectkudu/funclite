@@ -1,0 +1,2 @@
+run getApp.bat to fetch image contents
+run ' docker build -t ImageName . ' to build the image
