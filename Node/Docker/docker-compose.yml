@@ -3,4 +3,4 @@ services:
     NodeFunclite:
         image: balag0/noderuntime:v2alpine
         ports:
-            - "1338:1337"
+            - "80:1337/http"
