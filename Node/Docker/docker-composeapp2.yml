@@ -1,0 +1,6 @@
+version: "3"
+services:
+    FunctionsService2:
+        image: balag0/noderuntime:app2
+        ports:
+            - "82:1337/http"
